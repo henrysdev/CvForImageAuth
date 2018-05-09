@@ -6,7 +6,6 @@ import math
 
 KEY_SIZE = 16
 TRANSFORMS = 500
-BORDER_WIDTH = 30
 
 
 """
@@ -55,7 +54,7 @@ def shuffle(img, keypass):
     random.seed(keypass_hash)
     # map alphanumeric chars to numpy array of integers corresponding to
     # their respective ASCII values
-    iv = np.asarray(list(map(lambda x: ord(x), digest)))
+    iv = np.asarray(list(map(lambda x: ord(x), keypass_hash)))
     width, height = img.shape[0], img.shape[1]
     axis = width
     # i represents the current position in the iv array
@@ -63,7 +62,7 @@ def shuffle(img, keypass):
     # loop through transform operations
     for t in range(TRANSFORMS):
         # determine an amount to shift a row/column by
-        shft_amt = random.randint(-8989898,8989898)
+        shft_amt = random.randint(0, int(2**32 - 1))
         # determine whether to shift a row or column by the parity
         # of the value of the current value in the iv array
         if iv[i] % 2 == 0:
@@ -99,12 +98,12 @@ def mock_shuffle(img, keypass):
     m = hashlib.sha256(bytearray(keypass.encode('utf-8')))
     keypass_hash = m.hexdigest()
     random.seed(keypass_hash)
-    iv = np.asarray(list(map(lambda x: ord(x), digest)))
+    iv = np.fromiter(map(lambda x: ord(x), keypass_hash), dtype=np.int)
     width, height = img.shape[0], img.shape[1]
     axis = width
     i = 0
     for t in range(TRANSFORMS):
-        shft_amt = random.randint(-8989898,8989898)
+        shft_amt = random.randint(0, int(2**32 - 1))
         if iv[i] % 2 == 0:
             axis = width
         else:

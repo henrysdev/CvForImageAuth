@@ -70,15 +70,16 @@ def parse_args(args):
                 else:
                     print("not a file")
     # edge detection followed by decryption
-    elif argc == 2:
+    elif argc == 3:
         filepath = args[1]
+        keypass = args[2]
         if isfile(filepath):
             print("finding and decrypting img")
             img = cv2.imread(filepath)
             show(img)
             img = detecter.process(img)
             show(img)
-            decrypt_flow(img, filepath)
+            decrypt_flow(img, filepath, keypass)
         else:
             print("not a file")
     else:
