@@ -44,16 +44,6 @@ def shift_col(img, factor, col_num, tile_size):
     return img
 
 
-def hash_to_iv(digest):
-    """ map the alphanumeric values of the hash into an array of ASCII"""
-
-    l = len(digest[:KEY_SIZE])
-    iv = np.ones((l))
-    for i in range(l):
-        iv[i] = ord(digest[i])
-    return iv
-
-
 def shuffle(img, keypass):
     """ core shuffle algorithm that relies on largest power of 2 to shift """
 
@@ -63,9 +53,9 @@ def shuffle(img, keypass):
     keypass_hash = m.hexdigest()
     # random seed derived from value of hash
     random.seed(keypass_hash)
-    # map alphanumeric chars to array of integers corresponding to
+    # map alphanumeric chars to numpy array of integers corresponding to
     # their respective ASCII values
-    iv = hash_to_iv(keypass_hash)
+    iv = np.asarray(list(map(lambda x: ord(x), digest)))
     width, height = img.shape[0], img.shape[1]
     axis = width
     # i represents the current position in the iv array
@@ -103,17 +93,15 @@ def shuffle(img, keypass):
 
 
 def mock_shuffle(img, keypass):
-    """ first-pass shuffle simulation for fisher-yates algorithm """
+    """ dummy shuffle that keeps track of moves for backtracking """
 
     moves = []
     m = hashlib.sha256(bytearray(keypass.encode('utf-8')))
     keypass_hash = m.hexdigest()
     random.seed(keypass_hash)
-    iv = hash_to_iv(keypass_hash)
-
+    iv = np.asarray(list(map(lambda x: ord(x), digest)))
     width, height = img.shape[0], img.shape[1]
     axis = width
-
     i = 0
     for t in range(TRANSFORMS):
         shft_amt = random.randint(-8989898,8989898)
@@ -135,15 +123,16 @@ def mock_shuffle(img, keypass):
 
 
 def unshuffle(cimg, keypass):
-    """ unshuffle by repeating the mock_shuffle moves backwards """
+    """ unshuffle by repeating the shuffle moves backwards """
 
     img = cimg.copy()
     m = hashlib.sha256(bytearray(keypass.encode('utf-8')))
     keypass_hash = m.hexdigest()
-
     moves = mock_shuffle(img, keypass)
+    # reverse moves list
     moves = moves[::-1]
-
+    # apply inverse operations of shuffle algo to effectively
+    # unshuffle the image
     for t in range(len(moves)):
         tile_size = moves[t][2]
         shft_amt = moves[t][3]

@@ -12,8 +12,6 @@ import format_for_publish as publish
 
 FILE_EXTENSIONS = [".png",".jpg", ".JPG", ".PNG"]
 BORDER_WIDTH = 30
-# DEBUG
-TEST_DIR = 'test_files'
 
 
 def show(img):
@@ -48,7 +46,7 @@ def encrypt_flow(img, filepath, keypass):
 
 def parse_args(args):
     """ parse in commandline arguments for given commands """
-    
+
     argc = len(args)
     # in-place transforms (no edge detection)
     if argc == 4:
