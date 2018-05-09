@@ -17,12 +17,16 @@ TEST_DIR = 'test_files'
 
 
 def show(img):
+    """ display image in a separate window """
+
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
-def decrypt_flow(img, filepath, keypass):  
+def decrypt_flow(img, filepath, keypass):
+    """ UI flow for a decryption operation """
+
     unshuff = shuff_algo.unshuffle(img, keypass)
     show(unshuff)
     print("Save image? (y/n)")
@@ -32,6 +36,8 @@ def decrypt_flow(img, filepath, keypass):
 
 
 def encrypt_flow(img, filepath, keypass):
+    """ UI flow for an encryption operation """
+
     shuff = shuff_algo.shuffle(img, keypass)
     show(shuff)
     print("Save image? (y/n)")
@@ -41,6 +47,8 @@ def encrypt_flow(img, filepath, keypass):
 
 
 def parse_args(args):
+    """ parse in commandline arguments for given commands """
+    
     argc = len(args)
     # in-place transforms (no edge detection)
     if argc == 4:
