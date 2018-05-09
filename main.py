@@ -9,9 +9,7 @@ import shuffle as shuff_algo
 import find_and_warp as detecter
 import format_for_publish as publish
 
-KEY_SIZE = 16
-TRANSFORMS = 500 #45
-TILE_SIZES = [16, 32, 64, 128]
+
 FILE_EXTENSIONS = [".png",".jpg", ".JPG", ".PNG"]
 BORDER_WIDTH = 30
 # DEBUG

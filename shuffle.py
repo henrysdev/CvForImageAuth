@@ -6,7 +6,6 @@ import math
 
 KEY_SIZE = 16
 TRANSFORMS = 500
-TILE_SIZES = [16, 32, 64, 128]
 BORDER_WIDTH = 30
 
 
@@ -53,8 +52,8 @@ def shuffle(img, keypass):
 
     width, height = img.shape[0], img.shape[1]
     axis = width
+    
     i = 0
-
     for t in range(TRANSFORMS):
         shft_amt = random.randint(-8989898,8989898)
         if iv[i] % 2 == 0:
@@ -74,7 +73,6 @@ def shuffle(img, keypass):
                 tile_size = random.choice(avail_tiles)
                 img = shift_row(img, shft_amt, targ_row, tile_size)
         i += 1
-        # reset to first elem of iv when it hits the end
         if i == iv.shape[0]:
             i = 0
         #show(img)
@@ -87,16 +85,28 @@ def mock_shuffle(img, keypass):
     keypass_hash = m.hexdigest()
     iv = hash_to_iv(keypass_hash)
     random.seed(keypass_hash)
-    i = 0
 
+    width, height = img.shape[0], img.shape[1]
+    axis = width
+
+    i = 0
     for t in range(TRANSFORMS):
-        tile_size = random.choice(TILE_SIZES)
-        shft_amt = int(iv[i] * t)# * sign**t)
-        if iv[i] % 2:
-            moves.append((i, 'col', tile_size, shft_amt))
+        shft_amt = random.randint(-8989898,8989898)
+        if iv[i] % 2 == 0:
+            axis = width
         else:
-            moves.append((i, 'row', tile_size, shft_amt))
-        i+=1
+            axis = height
+        targ_row = random.randint(0, axis)
+        avail_tiles = [2 ** power_two(abs(axis - targ_row))]
+        if len(avail_tiles) > 0:
+            tile_size = random.choice(avail_tiles)
+            if axis == width:
+                tile_size = random.choice(avail_tiles)
+                moves.append((targ_row, 'col', tile_size, shft_amt))
+            elif axis == height:
+                tile_size = random.choice(avail_tiles)
+                moves.append((targ_row, 'row', tile_size, shft_amt))
+        i += 1
         if i == iv.shape[0]:
             i = 0
     return moves
