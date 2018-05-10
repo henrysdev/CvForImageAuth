@@ -8,12 +8,10 @@ KEY_SIZE = 16
 TRANSFORMS = 500
 
 
-"""
 def show(img):
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-"""
 
 
 def power_two(n):
@@ -55,8 +53,7 @@ def shuffle(img, keypass):
     # map alphanumeric chars to numpy array of integers corresponding to
     # their respective ASCII values
     iv = np.asarray(list(map(lambda x: ord(x), keypass_hash)))
-    width, height = img.shape[0], img.shape[1]
-    axis = width
+    axis = 0
     # i represents the current position in the iv array
     i = 0
     # loop through transform operations
@@ -66,21 +63,21 @@ def shuffle(img, keypass):
         # determine whether to shift a row or column by the parity
         # of the value of the current value in the iv array
         if iv[i] % 2 == 0:
-            axis = width
+            axis = 0 # shift horizontally by row
         else:
-            axis = height
+            axis = 1 # shift vertically by column
         # determine a target row/column to shift within bounds """
-        targ_row = random.randint(0, axis)
+        targ_row = random.randint(0, img.shape[axis])
         # determine the largest power of two less than the pos of the 
         # target row. This will be the width of the row/column to be
         # shifted
-        tile_size = 2 ** power_two(abs(axis - targ_row))
+        tile_size = 2 ** power_two(abs(img.shape[axis] - targ_row))
         if tile_size:
             # shift a row/column of specified width at a specified position
             # a specified amount and update the matrix
-            if axis == width:
+            if axis == 0:
                 img = shift_col(img, shft_amt, targ_row, tile_size)
-            elif axis == height:
+            elif axis == 1:
                 img = shift_row(img, shft_amt, targ_row, tile_size)
         # increment the current pos of iv being inspected. If i reaches
         # the end of the iv, start it back at zero.
@@ -99,21 +96,20 @@ def mock_shuffle(img, keypass):
     keypass_hash = m.hexdigest()
     random.seed(keypass_hash)
     iv = np.fromiter(map(lambda x: ord(x), keypass_hash), dtype=np.int)
-    width, height = img.shape[0], img.shape[1]
-    axis = width
+    axis = 0
     i = 0
     for t in range(TRANSFORMS):
         shft_amt = random.randint(0, int(2**32 - 1))
         if iv[i] % 2 == 0:
-            axis = width
+            axis = 0
         else:
-            axis = height
-        targ_row = random.randint(0, axis)
-        tile_size = 2 ** power_two(abs(axis - targ_row))
+            axis = 1
+        targ_row = random.randint(0, img.shape[axis])
+        tile_size = 2 ** power_two(abs(img.shape[axis] - targ_row))
         if tile_size:
-            if axis == width:
+            if axis == 0:
                 moves.append((targ_row, 'col', tile_size, shft_amt))
-            elif axis == height:
+            elif axis == 1:
                 moves.append((targ_row, 'row', tile_size, shft_amt))
         i += 1
         if i == iv.shape[0]:
