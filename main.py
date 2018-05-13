@@ -78,7 +78,6 @@ def parse_args(args):
             img = cv2.imread(filepath)
             show(img)
             img = detecter.process(img)
-            show(img)
             decrypt_flow(img, filepath, keypass)
         else:
             print("not a file")

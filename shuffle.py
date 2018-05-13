@@ -5,13 +5,7 @@ import hashlib
 import math
 
 KEY_SIZE = 16
-TRANSFORMS = 500
-
-
-def show(img):
-    cv2.imshow('image', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+TRANSFORMS = 250
 
 
 def power_two(n):
@@ -27,7 +21,7 @@ def shift_row(img, factor, row_num, tile_size):
     """ shift a row of image pixels of width tile_size horizontally """
 
     row = img[row_num:row_num + tile_size, :]
-    row = np.roll(row, factor)
+    row = np.roll(row, factor, axis=(0,1,2))
     img[row_num:row_num + tile_size, :] = row
     return img
 
@@ -36,7 +30,7 @@ def shift_col(img, factor, col_num, tile_size):
     """ shift a column of image pixels of width tile_size vertically """
 
     col = img[:, col_num:col_num + tile_size]
-    col = np.roll(col, factor)
+    col = np.roll(col, factor, axis=(0,1,2))
     img[:, col_num:col_num + tile_size] = col
     return img
 
@@ -84,7 +78,6 @@ def shuffle(img, keypass):
         i += 1
         if i == iv.shape[0]:
             i = 0
-        #show(img)
     return img
 
 
