@@ -1,0 +1,29 @@
+// int = integer, curr = current, pos = position, val = value
+
+function Scramble (image, password)
+        NUM_TRANSFORMS = 500 // constant value
+        random.use_seed(password as hex value) // use password as random seed
+        password_hash = SHA256(password) as char array
+        ascii_vals = password_hash as int array // ASCII int values of chars
+        
+        i=0
+        LOOP from t=0 until t=NUM_TRANSFORMS
+                shift_amount = random_int(min,max) // random shift amount within large range
+                if ascii_vals[i] is an even number
+                        axis_to_shift = vertical // shift a column
+                        axis_dimension = image.width
+                else
+                        axis_to_shift = horizontal // shift a row
+                        axis_dimension = image.height
+
+                pos_of_section_to_shift = random_int(0, axis_dimension)
+                section_width = 2 to the exponent of log_base_2(axis_dimension - pos_of_section_to_shift)
+
+                if axis_to_shift is vertical
+                        image.shift_column(shift_amount, pos_of_section_to_shift, section_width)
+                if axis_to_shift is horizontal
+                        image.shift_row(shift_amount, pos_of_section_to_shift, section_width)
+
+                i++
+                if i == ascii_vals.length // start loop over at end of ascii array
+                        i = 0
